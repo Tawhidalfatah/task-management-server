@@ -44,6 +44,35 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/updatetask/:id", async (req, res) => {
+      const id = req.params.id;
+      const body = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          task: body.task,
+          description: body.description,
+          status: body.status,
+          priority: body.priority,
+        },
+      };
+      const options = { upsert: true };
+      const result = await taskCollection.updateOne(query, updateDoc, options);
+      res.send(result);
+    });
+
+    app.patch("/completetask/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status: "completed",
+        },
+      };
+      const result = await taskCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
     app.delete("/deletetask/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
